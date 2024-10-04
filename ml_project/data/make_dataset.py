@@ -5,8 +5,13 @@ from sklearn.calibration import LabelEncoder
 import typing as tp
 
 from sklearn.model_selection import train_test_split
+from rectools.model_selection.random_split import RandomSplitter
+from rectools.dataset import Interactions
 
-from ml_project.common.splitter_params import SplitterParams
+from ml_project.common import TimeRangeSplitterParams, LastNSplitterParams, RandomSplitterParams
+
+SplitterParams = tp.Union[TimeRangeSplitterParams, LastNSplitterParams, RandomSplitterParams]
+
 
 def read_data(path: str) -> pd.DataFrame:
     return pd.read_csv(path, sep=";", encoding="unicode-escape") # TODO: add params to config
@@ -27,14 +32,23 @@ def merge_interactions_and_items(
 
     return merged_df
 
-def split_data_in_train_test(
-    data: pd.DataFrame, splitter_params: SplitterParams
+def split_data_for_train_test(
+    interactions_df: pd.DataFrame,
+    splitter_params: SplitterParams
 ) -> tp.Tuple[pd.DataFrame, pd.DataFrame]:
     """Splits data into train and test."""
-    train_df, test_df = train_test_split(
-        data,
+    splitter = RandomSplitter(
         **splitter_params
     )
+
+    interactions = Interactions(interactions_df)
+    pack = splitter.split(interactions=interactions)
+
+    for train_ids, test_ids, _ in pack:
+
+        train_df = interactions_df.iloc[train_ids]
+        test_df = interactions_df.iloc[test_ids]
+
     return train_df, test_df
 
 def process_interactions(
