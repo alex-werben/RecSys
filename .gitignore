@@ -4,5 +4,4 @@ models/*.pkl
 models/*.json
 models/*.csv
 outputs/**/
-data/
 .DS_Store
