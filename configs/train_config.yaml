@@ -13,7 +13,7 @@ data:
         user_id: User-ID
         item_id: ISBN
         weight: Book-Rating
-        datetime: # Miss
+        datetime: datetime
     user_features_path: data/raw/BX-Users.csv
     item_features_path: data/raw/BX-Books.csv
   output:
@@ -24,12 +24,12 @@ data:
 train_params:
   model_type: SVD
 splitter_params:
-  test_fold_frac: 0.1
-  n_splits: 1
-  random_state: 23
-  filter_cold_users: False
-  filter_cold_items: False
-  filter_already_seen: False
+    test_fold_frac: 0.1
+    n_splits: 1
+    random_state: 23
+    filter_cold_users: False
+    filter_cold_items: False
+    filter_already_seen: False
 metric_params:
   Recall:
     k: 10

@@ -29,11 +29,12 @@ def main(conf: DictConfig = None):
         read_params=conf.data.input.interactions.read_params
     )
 
-    logger.info(f"{interactions_df.shape=}")
+    interactions_column_params = {v: k for k, v in conf.data.input.interactions.column_params.items()}
 
+    logger.info(f"{interactions_df.shape=}")
     interactions_df = process_interactions(
         interactions_df=interactions_df,
-        interactions_column_params=conf.data.input.interactions.column_params
+        interactions_column_params=interactions_column_params
     )
 
     interactions_df.info()

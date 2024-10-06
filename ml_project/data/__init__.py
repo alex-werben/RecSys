@@ -1,7 +1,7 @@
-from .make_dataset import read_data, merge_interactions_and_items, process_interactions
+from .make_dataset import read_data, split_data_for_train_test, process_interactions
 
 __all__ = [
     "read_data",
-    "merge_interactions_and_items",
+    "split_data_for_train_test",
     "process_interactions"
 ]

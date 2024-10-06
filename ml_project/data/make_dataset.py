@@ -4,7 +4,6 @@ from rectools.columns import Columns
 from sklearn.calibration import LabelEncoder
 import typing as tp
 
-from sklearn.model_selection import train_test_split
 from rectools.model_selection.random_split import RandomSplitter
 from rectools.metrics.base import MetricAtK
 from rectools.metrics import Recall, Precision
@@ -23,26 +22,10 @@ SplitterParams = tp.Union[TimeRangeSplitterParams, LastNSplitterParams, RandomSp
 
 def read_data(
     path: str,
-    read_params: ReadParams
+    read_params: ReadParams = {}
 ) -> pd.DataFrame:
     # TODO: add docstring.
     return pd.read_csv(path, **read_params)
-
-def merge_interactions_and_items(
-    interactions_df: pd.DataFrame,
-    items_df: pd.DataFrame
-) -> pd.DataFrame:
-    """Merges interactions with item features."""
-    merged_df = (
-        interactions_df
-        .merge(
-            items_df[["ISBN", "Book-Title", "Image-URL-M"]],
-            how="left",
-            on="ISBN"
-        )
-    )
-
-    return merged_df
 
 def split_data_for_train_test(
     interactions_df: pd.DataFrame,
@@ -57,7 +40,6 @@ def split_data_for_train_test(
     pack = splitter.split(interactions=interactions)
 
     for train_ids, test_ids, _ in pack:
-
         train_df = interactions_df.iloc[train_ids]
         test_df = interactions_df.iloc[test_ids]
 
@@ -70,14 +52,7 @@ def process_interactions(
     """Processes interactions dataframe."""
     le = LabelEncoder()
 
-    interactions_df = interactions_df.rename(
-        columns={
-            interactions_column_params.user_id: Columns.User,
-            interactions_column_params.item_id: Columns.Item,
-            interactions_column_params.weight: Columns.Weight,
-            interactions_column_params.datetime: Columns.Datetime
-        }
-    )
+    interactions_df = interactions_df.rename(columns=interactions_column_params)
 
     interactions_df = interactions_df[interactions_df[Columns.Weight] > 0]
     interactions_df[Columns.Item] = le.fit_transform(interactions_df[Columns.Item])
