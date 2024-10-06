@@ -4,10 +4,12 @@ import hydra
 from omegaconf import DictConfig
 from pathlib import Path
 from rectools.dataset import Dataset
+from dotenv import load_dotenv
 
 project_path = str(Path(__file__).parent.parent)
 sys.path.append(project_path)
 
+from ml_project.connections import S3Connector
 from ml_project.data import process_interactions, read_data
 from ml_project.models import (
     serialize_object,
@@ -18,7 +20,6 @@ logger = logging.getLogger(__name__)
 handler = logging.StreamHandler(sys.stdout)
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
-
 
 @hydra.main(
     version_base="1.1",
@@ -31,7 +32,13 @@ def main(conf: DictConfig):
     Args:
         conf (DictConfig): hydra config.
     """
+    load_dotenv()
+    
     logger.info("Starting pipeline")
+
+    s3_conn = S3Connector(
+        bucket_name=conf.s3_params.bucket_name
+    )
 
     interactions_df = read_data(
         path=conf.data.input.interactions.path,
@@ -58,15 +65,15 @@ def main(conf: DictConfig):
     )
 
     logger.info("Serializing model")
-    serialize_object(
-        object=model,
-        output=conf.data.output.model_path
+    s3_conn.put(
+        obj=model,
+        path=conf.data.output.model_path
     )
 
     logger.info("Serializing dataset")
-    serialize_object(
-        object=dataset,
-        output=conf.data.output.dataset_path
+    s3_conn.put(
+        obj=dataset,
+        path=conf.data.output.dataset_path
     )
 
     logger.info("Pipeline done!")

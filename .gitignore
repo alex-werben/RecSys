@@ -5,3 +5,4 @@ models/*.json
 models/*.csv
 outputs/**/
 .DS_Store
+.env
