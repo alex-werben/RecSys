@@ -11,7 +11,7 @@ sys.path.append(project_path)
 from ml_project.data import read_data, process_interactions
 from ml_project.models import (
     train_model,
-    serialize_model
+    serialize_object
 )
 
 logger = logging.getLogger(__name__)
@@ -34,6 +34,7 @@ def main(conf: DictConfig = None):
         interactions_column_params=conf.data.input.interactions.column_params
     )
 
+    logger.info("interactions_df.info():")
     interactions_df.info()
 
     dataset = Dataset.construct(interactions_df=interactions_df)
@@ -43,10 +44,19 @@ def main(conf: DictConfig = None):
         train_params=conf.train_params
     )
 
-    serialize_model(
-        model=model,
+    logger.info("Serializing model")
+    serialize_object(
+        object=model,
         output=conf.data.output.model_path
     )
+    
+    logger.info("Serializing dataset")
+    serialize_object(
+        object=dataset,
+        output=conf.data.output.dataset_path
+    )
+    
+    logger.info("Pipeline done!")
 
 
 if __name__ == "__main__":

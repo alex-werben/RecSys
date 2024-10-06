@@ -25,7 +25,8 @@ def train_model(
 
 def predict_model(
     model: ModelBase,
-    dataset: Dataset
+    dataset: Dataset,
+    predict_params: PredictParams
 ) -> pd.DataFrame:
     """Predict model."""
     interactions_df = dataset.get_raw_interactions()
@@ -34,8 +35,7 @@ def predict_model(
     recs_df: pd.DataFrame = model.recommend(
         users=users_to_predict,
         dataset=dataset,
-        k=10,
-        filter_viewed=True
+        **predict_params
     )
 
     return recs_df
@@ -71,10 +71,10 @@ def evaluate_model(
 
     return metrics
 
-def serialize_model(
-    model: ModelBase,
+def serialize_object(
+    object: tp.Any,
     output: str
 ) -> None:
-    """Saves model to output path."""
+    """Saves object to output path."""
     with open(output, "wb") as f:
-        pickle.dump(model, f)
+        pickle.dump(object, f)

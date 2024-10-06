@@ -18,6 +18,8 @@ data:
     item_features_path: data/raw/BX-Books.csv
   output:
     model_path: models/model.pkl
+    dataset_path: models/dataset.pkl
+    recommendations_path: models/recommendations.csv
     metric_path: models/metrics.json
 train_params:
   model_type: SVD
@@ -36,4 +38,4 @@ metric_params:
 predict_params:
   k: 10
   filter_viewed: False
-  add_rank_col: True
+  add_rank_col: False
