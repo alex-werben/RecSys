@@ -12,4 +12,21 @@ pip install -r requirements.txt
 
 ### Fit model
 
-* notebooks/ - contain implementations of some basic recommendation algorithms.
+~~~
+python pipelines/trian.py
+~~~
+After fitting model it'll be saved to /models in .pkl format.
+
+### Predict model
+
+~~~
+python pipelines/predict.py
+~~~
+Process loads model and dataset, after that it makes prediction and saves it.
+
+### Evaluate model
+
+~~~
+python pipelines/eval.py
+~~~
+Process for scoring model, metrics are saved in /models in .json format.

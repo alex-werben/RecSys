@@ -7,7 +7,9 @@ from rectools.models import PureSVDModel
 from rectools.metrics import calc_metrics, Recall, Precision
 from rectools.dataset import Dataset
 from rectools.columns import Columns
+from ml_project.common.predict_params import PredictParams
 from ml_project.common.train_params import TrainParams
+from ml_project.data.make_dataset import prepare_metrics_dict
 
 def train_model(
     dataset: Dataset,
@@ -41,7 +43,9 @@ def predict_model(
 def evaluate_model(
     train_df: pd.DataFrame,
     test_df: pd.DataFrame,
-    train_params: TrainParams
+    train_params: TrainParams,
+    metric_params: tp.Dict[str, tp.Dict[str, tp.Any]],
+    predict_params: PredictParams
 ):
     dataset = Dataset.construct(interactions_df=train_df)
 
@@ -53,14 +57,10 @@ def evaluate_model(
     recs_df = model.recommend(
         users=test_df[Columns.User].unique(),
         dataset=dataset,
-        k=10,       # TODO: add eval params
-        filter_viewed=True
+        **predict_params
     )
 
-    metrics_dict = {
-        "Recall_10": Recall(k=10),  # TODO: configure
-        "Precision_10": Precision(k=10)
-    }
+    metrics_dict = prepare_metrics_dict(metric_params)
 
     metrics: tp.Dict[str, float] = calc_metrics(
         metrics=metrics_dict,

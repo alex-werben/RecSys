@@ -1,13 +1,9 @@
 import sys
-import os
 import logging
 import hydra
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 from pathlib import Path
-from rectools.columns import Columns
 from rectools.dataset import Dataset
-import pandas as pd
-import datetime
 
 project_path = str(Path(__file__).parent.parent)
 sys.path.append(project_path)
@@ -15,7 +11,6 @@ sys.path.append(project_path)
 from ml_project.data import read_data, process_interactions
 from ml_project.models import (
     train_model,
-    evaluate_model,
     serialize_model
 )
 
@@ -28,10 +23,16 @@ logger.addHandler(handler)
 def main(conf: DictConfig = None):
     logger.info("Starting pipeline")
 
-    interactions_df = read_data(conf.data.input.interactions_path)
+    interactions_df = read_data(
+        path=conf.data.input.interactions.path,
+        read_params=conf.data.input.interactions.read_params
+    )
     logger.info(f"{interactions_df.shape=}")
 
-    interactions_df = process_interactions(interactions_df)
+    interactions_df = process_interactions(
+        interactions_df=interactions_df,
+        interactions_column_params=conf.data.input.interactions.column_params
+    )
 
     interactions_df.info()
 

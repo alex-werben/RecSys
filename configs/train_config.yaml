@@ -1,9 +1,19 @@
 hydra:
   job:
     chdir: False  # This is used to fix problem with changind working directory that affects path problem
+
 data:
   input:
-    interactions_path: data/raw/BX-Book-Ratings.csv
+    interactions: 
+      path: data/raw/BX-Book-Ratings.csv
+      read_params:
+        sep: ;
+        encoding: unicode-escape
+      column_params:
+        user_id: User-ID
+        item_id: ISBN
+        weight: Book-Rating
+        datetime: # Miss
     user_features_path: data/raw/BX-Users.csv
     item_features_path: data/raw/BX-Books.csv
   output:
@@ -11,3 +21,19 @@ data:
     metric_path: models/metrics.json
 train_params:
   model_type: SVD
+splitter_params:
+  test_fold_frac: 0.1
+  n_splits: 1
+  random_state: 23
+  filter_cold_users: False
+  filter_cold_items: False
+  filter_already_seen: False
+metric_params:
+  Recall:
+    k: 10
+  Precision:
+    k: 10
+predict_params:
+  k: 10
+  filter_viewed: False
+  add_rank_col: True

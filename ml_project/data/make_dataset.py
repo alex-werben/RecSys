@@ -6,15 +6,27 @@ import typing as tp
 
 from sklearn.model_selection import train_test_split
 from rectools.model_selection.random_split import RandomSplitter
+from rectools.metrics.base import MetricAtK
+from rectools.metrics import Recall, Precision
 from rectools.dataset import Interactions
 
-from ml_project.common import TimeRangeSplitterParams, LastNSplitterParams, RandomSplitterParams
+from ml_project.common import (
+    TimeRangeSplitterParams,
+    LastNSplitterParams,
+    RandomSplitterParams,
+    InteractionsColumnParams,
+    ReadParams
+)
 
 SplitterParams = tp.Union[TimeRangeSplitterParams, LastNSplitterParams, RandomSplitterParams]
 
 
-def read_data(path: str) -> pd.DataFrame:
-    return pd.read_csv(path, sep=";", encoding="unicode-escape") # TODO: add params to config
+def read_data(
+    path: str,
+    read_params: ReadParams
+) -> pd.DataFrame:
+    # TODO: add docstring.
+    return pd.read_csv(path, **read_params)
 
 def merge_interactions_and_items(
     interactions_df: pd.DataFrame,
@@ -52,22 +64,21 @@ def split_data_for_train_test(
     return train_df, test_df
 
 def process_interactions(
-    interactions_df: pd.DataFrame
+    interactions_df: pd.DataFrame,
+    interactions_column_params: InteractionsColumnParams
 ) -> pd.DataFrame:
     """Processes interactions dataframe."""
     le = LabelEncoder()
 
     interactions_df = interactions_df.rename(
         columns={
-            "User-ID": Columns.User,
-            "ISBN": Columns.Item,
-            "Book-Rating": Columns.Weight,
-            "Book-Title": "item_name",
-            "Image-URL-M": "image_url"
+            interactions_column_params.user_id: Columns.User,
+            interactions_column_params.item_id: Columns.Item,
+            interactions_column_params.weight: Columns.Weight,
+            interactions_column_params.datetime: Columns.Datetime
         }
     )
 
-    # interactions_df = interactions_df[interactions_df["item_name"].notna()]
     interactions_df = interactions_df[interactions_df[Columns.Weight] > 0]
     interactions_df[Columns.Item] = le.fit_transform(interactions_df[Columns.Item])
     interactions_df[Columns.User] = le.fit_transform(interactions_df[Columns.User])
@@ -85,3 +96,17 @@ def process_interactions(
 
     return interactions_df
 
+def prepare_metrics_dict(
+    metric_params: tp.Dict[str, tp.Dict[str, tp.Any]]
+) -> tp.Dict[str, MetricAtK]:
+    metric_dict = {}
+
+    metrics = {
+        "Recall": Recall,
+        "Precision": Precision
+    }
+
+    for metric_name in metric_params.keys():
+        metric_dict[metric_name] = metrics[metric_name](**metric_params[metric_name])
+    
+    return metric_dict
