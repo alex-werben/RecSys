@@ -1,15 +1,15 @@
 import pickle
 import pandas as pd
-import numpy as np
 import typing as tp
 from rectools.models.base import ModelBase
 from rectools.models import PureSVDModel
-from rectools.metrics import calc_metrics, Recall, Precision
+from rectools.metrics import calc_metrics
 from rectools.dataset import Dataset
 from rectools.columns import Columns
 from ml_project.common.predict_params import PredictParams
 from ml_project.common.train_params import TrainParams
 from ml_project.data.make_dataset import prepare_metrics_dict
+
 
 def train_model(
     dataset: Dataset,
@@ -22,6 +22,7 @@ def train_model(
     model.fit(dataset)
 
     return model
+
 
 def predict_model(
     model: ModelBase,
@@ -40,13 +41,26 @@ def predict_model(
 
     return recs_df
 
+
 def evaluate_model(
     train_df: pd.DataFrame,
     test_df: pd.DataFrame,
     train_params: TrainParams,
     metric_params: tp.Dict[str, tp.Dict[str, tp.Any]],
     predict_params: PredictParams
-):
+) -> tp.Dict[str, float]:
+    """Evaluate model.
+
+    Args:
+        train_df (pd.DataFrame): train interactions
+        test_df (pd.DataFrame): test interactions
+        train_params (TrainParams): train parameters
+        metric_params (tp.Dict[str, tp.Dict[str, tp.Any]]): metric parameters
+        predict_params (PredictParams): predict parameters
+
+    Returns:
+        (tp.Dict[str, float]): dict with metric names and values
+    """
     dataset = Dataset.construct(interactions_df=train_df)
 
     model = train_model(
@@ -71,10 +85,11 @@ def evaluate_model(
 
     return metrics
 
+
 def serialize_object(
-    object: tp.Any,
+    obj: tp.Any,
     output: str
 ) -> None:
-    """Saves object to output path."""
+    """Save object to output path."""
     with open(output, "wb") as f:
-        pickle.dump(object, f)
+        pickle.dump(obj, f)

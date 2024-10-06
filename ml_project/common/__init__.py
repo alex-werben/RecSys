@@ -1,7 +1,6 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 sys.path.append(str(Path(__file__).parent))
-
 from last_n_splitter_params import LastNSplitterParams
 from random_splitter_params import RandomSplitterParams
 from time_range_splitter_params import TimeRangeSplitterParams

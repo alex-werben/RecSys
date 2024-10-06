@@ -1,16 +1,18 @@
-from hydra import initialize, compose
 import os
+
+from hydra import compose, initialize
 
 from pipelines.train import main
 
+
 def test_train_e2e():
-    
+    """Tests train pipeline end-to-end and checks output existence."""
     with initialize(config_path="../configs", version_base="1.1"):
         conf = compose(config_name="test_config", return_hydra_config=True)
-        
+
         dir_name = conf.data.output.model_path.split('/')[0]
         os.makedirs(dir_name, exist_ok=True)
-        
+
         main(conf)
 
         assert os.path.exists(conf.data.output.model_path)

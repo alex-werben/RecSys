@@ -1,27 +1,39 @@
 import json
-import sys
 import logging
+from pathlib import Path
+import sys
+
 import hydra
 from omegaconf import DictConfig
-from pathlib import Path
 from rectools.columns import Columns
 
 project_path = str(Path(__file__).parent.parent)
 sys.path.append(project_path)
 
-from ml_project.data.make_dataset import split_data_for_train_test
-from ml_project.data import read_data, process_interactions
-from ml_project.models import (
-    evaluate_model,
+from ml_project.data import (
+    process_interactions,
+    read_data,
+    split_data_for_train_test
 )
+from ml_project.models import evaluate_model
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler(sys.stdout)
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
-@hydra.main(version_base="1.1", config_path="../configs", config_name="train_config")
-def main(conf: DictConfig = None):
+
+@hydra.main(
+    version_base="1.1",
+    config_path="../configs",
+    config_name="train_config"
+)
+def main(conf: DictConfig):
+    """Evaluate pipeline.
+
+    Args:
+        conf (DictConfig): hydra config.
+    """
     logger.info("Starting pipeline")
 
     interactions_df = read_data(
@@ -29,7 +41,8 @@ def main(conf: DictConfig = None):
         read_params=conf.data.input.interactions.read_params
     )
 
-    interactions_column_params = {v: k for k, v in conf.data.input.interactions.column_params.items()}
+    dict_items = conf.data.input.interactions.column_params.items()
+    interactions_column_params = {v: k for k, v in dict_items}
 
     logger.info(f"{interactions_df.shape=}")
     interactions_df = process_interactions(
@@ -39,7 +52,10 @@ def main(conf: DictConfig = None):
 
     interactions_df.info()
 
-    train_df, test_df = split_data_for_train_test(interactions_df, conf.splitter_params)
+    train_df, test_df = split_data_for_train_test(
+        interactions_df=interactions_df,
+        splitter_params=conf.splitter_params
+    )
 
     logger.info(f"{train_df.shape=}")
     logger.info(f"{test_df.shape=}")

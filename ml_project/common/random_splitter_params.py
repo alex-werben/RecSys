@@ -1,7 +1,10 @@
 from dataclasses import dataclass, field
 
+
 @dataclass
 class RandomSplitterParams:
+    """Random splitter parameters."""
+
     test_fold_frac: float = field(default=0.2)
     n_splits: int = field(default=1)
     random_state: int = field(default=23)

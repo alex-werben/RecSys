@@ -1,7 +1,10 @@
 from dataclasses import dataclass, field
 
+
 @dataclass
 class TimeRangeSplitterParams:
+    """Time range splitter parameters."""
+
     test_size: str = field(default="30D")
     n_splits: int = field(default=1)
     filter_cold_users: bool = field(default=False)

@@ -1,28 +1,33 @@
-import json
-import sys
 import logging
+from pathlib import Path
+import pickle
+import sys
+
 import hydra
 from omegaconf import DictConfig
-from pathlib import Path
-from rectools.columns import Columns
-import pickle
 
 project_path = str(Path(__file__).parent.parent)
 sys.path.append(project_path)
 
-from ml_project.data.make_dataset import split_data_for_train_test
-from ml_project.data import read_data, process_interactions
-from ml_project.models import (
-    predict_model,
-)
+from ml_project.models import predict_model
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler(sys.stdout)
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
-@hydra.main(version_base="1.1", config_path="../configs", config_name="train_config")
-def main(conf: DictConfig = None):
+
+@hydra.main(
+    version_base="1.1",
+    config_path="../configs",
+    config_name="train_config"
+)
+def main(conf: DictConfig):
+    """Predict pipeline.
+
+    Args:
+        conf (DictConfig): hydra config.
+    """
     logger.info("Starting pipeline")
 
     logger.info(f"Loading model from {conf.data.output.model_path}")
@@ -43,8 +48,9 @@ def main(conf: DictConfig = None):
     )
 
     recs_df.info()
-    
+
     recs_df.to_csv(conf.data.output.recommendations_path, index=False)
+
 
 if __name__ == "__main__":
     main()

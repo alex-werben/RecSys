@@ -8,10 +8,10 @@ from rectools.dataset import Dataset
 project_path = str(Path(__file__).parent.parent)
 sys.path.append(project_path)
 
-from ml_project.data import read_data, process_interactions
+from ml_project.data import process_interactions, read_data
 from ml_project.models import (
-    train_model,
-    serialize_object
+    serialize_object,
+    train_model
 )
 
 logger = logging.getLogger(__name__)
@@ -19,8 +19,18 @@ handler = logging.StreamHandler(sys.stdout)
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
-@hydra.main(version_base="1.1", config_path="../configs", config_name="train_config")
-def main(conf: DictConfig = None):
+
+@hydra.main(
+    version_base="1.1",
+    config_path="../configs",
+    config_name="train_config"
+)
+def main(conf: DictConfig):
+    """Train pipeline.
+
+    Args:
+        conf (DictConfig): hydra config.
+    """
     logger.info("Starting pipeline")
 
     interactions_df = read_data(
@@ -29,7 +39,8 @@ def main(conf: DictConfig = None):
     )
     logger.info(f"{interactions_df.shape=}")
 
-    interactions_column_params = {v: k for k, v in conf.data.input.interactions.column_params.items()}
+    dict_items = conf.data.input.interactions.column_params.items()
+    interactions_column_params = {v: k for k, v in dict_items}
 
     interactions_df = process_interactions(
         interactions_df=interactions_df,
@@ -51,13 +62,13 @@ def main(conf: DictConfig = None):
         object=model,
         output=conf.data.output.model_path
     )
-    
+
     logger.info("Serializing dataset")
     serialize_object(
         object=dataset,
         output=conf.data.output.dataset_path
     )
-    
+
     logger.info("Pipeline done!")
 
 
