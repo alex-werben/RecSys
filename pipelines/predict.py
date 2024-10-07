@@ -1,8 +1,8 @@
 import logging
 from pathlib import Path
-import pickle
 import sys
 
+from dotenv import load_dotenv
 import hydra
 from omegaconf import DictConfig
 
@@ -10,6 +10,7 @@ project_path = str(Path(__file__).parent.parent)
 sys.path.append(project_path)
 
 from ml_project.models import predict_model
+from ml_project.connections import S3Connector
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler(sys.stdout)
@@ -29,15 +30,17 @@ def main(conf: DictConfig):
         conf (DictConfig): hydra config.
     """
     logger.info("Starting pipeline")
+    load_dotenv()
+    s3_conn = S3Connector(
+        bucket_name=conf.s3_params.bucket_name
+    )
 
     logger.info(f"Loading model from {conf.data.output.model_path}")
-    with open(conf.data.output.model_path, "rb") as model_file:
-        model = pickle.load(model_file)
+    model = s3_conn.get(path=conf.data.output.model_path)
     logger.info("Model loaded successfully")
 
     logger.info(f"Loading dataset from {conf.data.output.dataset_path}")
-    with open(conf.data.output.dataset_path, "rb") as dataset_file:
-        dataset = pickle.load(dataset_file)
+    dataset = s3_conn.get(path=conf.data.output.dataset_path)
     logger.info("Dataset loaded successfully")
 
     logger.info("Predicting recommendations")

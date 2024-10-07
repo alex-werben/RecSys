@@ -46,7 +46,7 @@ def evaluate_model(
     train_df: pd.DataFrame,
     test_df: pd.DataFrame,
     train_params: TrainParams,
-    metric_params: tp.Dict[str, tp.Dict[str, tp.Any]],
+    metric_params: tp.Dict[str, tp.Dict[str, tp.Any]],  # TODO: create dataclass
     predict_params: PredictParams
 ) -> tp.Dict[str, float]:
     """Evaluate model.
