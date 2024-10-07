@@ -88,8 +88,8 @@ def evaluate_model(
 
 def serialize_object(
     obj: tp.Any,
-    output: str
+    path: str
 ) -> None:
     """Save object to output path."""
-    with open(output, "wb") as f:
+    with open(path, "wb") as f:
         pickle.dump(obj, f)

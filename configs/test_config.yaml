@@ -37,3 +37,5 @@ predict_params:
   k: 10
   filter_viewed: False
   add_rank_col: False
+s3_params:
+  bucket_name: alex-werben-recsys-bucket
