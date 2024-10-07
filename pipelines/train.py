@@ -10,7 +10,7 @@ project_path = str(Path(__file__).parent.parent)
 sys.path.append(project_path)
 
 from ml_project.connections import S3Connector
-from ml_project.data import process_interactions, read_data
+from ml_project.data import read_data, InteractionsTransformer
 from ml_project.models import train_model
 
 logger = logging.getLogger(__name__)
@@ -44,13 +44,9 @@ def main(conf: DictConfig):
     )
     logger.info(f"{interactions_df.shape=}")
 
-    dict_items = conf.data.input.interactions.column_params.items()
-    interactions_column_params = {v: k for k, v in dict_items}
+    transformer = InteractionsTransformer(interactions_column_params=conf.data.input.interactions.column_params)
 
-    interactions_df = process_interactions(
-        interactions_df=interactions_df,
-        interactions_column_params=interactions_column_params
-    )
+    interactions_df = transformer.fit_transform(interactions_df)
 
     logger.info("interactions_df.info():")
     interactions_df.info()

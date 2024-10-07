@@ -7,11 +7,12 @@ import hydra
 from omegaconf import DictConfig
 from rectools.columns import Columns
 
+from ml_project.data import InteractionsTransformer
+
 project_path = str(Path(__file__).parent.parent)
 sys.path.append(project_path)
 
 from ml_project.data import (
-    process_interactions,
     read_data,
     split_data_for_train_test
 )
@@ -40,16 +41,13 @@ def main(conf: DictConfig):
         path=conf.data.input.interactions.path,
         read_params=conf.data.input.interactions.read_params
     )
-
-    dict_items = conf.data.input.interactions.column_params.items()
-    interactions_column_params = {v: k for k, v in dict_items}
-
     logger.info(f"{interactions_df.shape=}")
-    interactions_df = process_interactions(
-        interactions_df=interactions_df,
-        interactions_column_params=interactions_column_params
-    )
 
+    transformer = InteractionsTransformer(interactions_column_params=conf.data.input.interactions.column_params)
+
+    interactions_df = transformer.fit_transform(interactions_df)
+
+    logger.info("interactions_df.info():")
     interactions_df.info()
 
     train_df, test_df = split_data_for_train_test(

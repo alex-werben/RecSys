@@ -1,7 +1,4 @@
-import datetime
 import pandas as pd
-from rectools.columns import Columns
-from sklearn.calibration import LabelEncoder
 import typing as tp
 
 from rectools.model_selection.random_split import RandomSplitter
@@ -10,7 +7,6 @@ from rectools.metrics import Precision, Recall
 from rectools.dataset import Interactions
 
 from ml_project.common import (
-    InteractionsColumnParams,
     LastNSplitterParams,
     RandomSplitterParams,
     ReadParams,
@@ -61,41 +57,6 @@ def split_data_for_train_test(
         test_df = interactions_df.iloc[test_ids]
 
     return train_df, test_df
-
-
-def process_interactions(
-    interactions_df: pd.DataFrame,
-    interactions_column_params: InteractionsColumnParams
-) -> pd.DataFrame:
-    """Process interactions.
-
-    Args:
-        interactions_df (pd.DataFrame): dataframe with interactions
-        interactions_column_params (InteractionsColumnParams): interactions column parameters
-
-    Returns:
-        pd.DataFrame: processed interactions
-    """
-    le = LabelEncoder()
-
-    interactions_df = interactions_df.rename(columns=interactions_column_params)
-
-    interactions_df = interactions_df[interactions_df[Columns.Weight] > 0]
-    interactions_df[Columns.Item] = le.fit_transform(interactions_df[Columns.Item])
-    interactions_df[Columns.User] = le.fit_transform(interactions_df[Columns.User])
-    interactions_df[Columns.Datetime] = datetime.date.today()
-
-    interactions_df = (
-        interactions_df
-        .groupby(Columns.UserItem)
-        .agg({
-            Columns.Weight: "sum",
-            Columns.Datetime: "last"
-        })
-        .reset_index()
-    )
-
-    return interactions_df
 
 
 def prepare_metrics_dict(

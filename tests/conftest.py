@@ -20,10 +20,10 @@ def dataset_path():
 
     return path
 
+
 @pytest.fixture
 def mock_s3_put():
     with mock.patch("pipelines.train.S3Connector.put") as mocked_put:
         with tempfile.TemporaryDirectory() as tmp_dir:
-            
             mocked_put.side_effect = lambda obj, path: serialize_object(obj, path)
             yield tmp_dir

@@ -1,6 +1,9 @@
 # RecSys
 Implementation of some basic recommendation system algorithms.
 
+## Requirements
+- Python 3.12.2 or higher
+
 ## Installation:
 ~~~
 python -m venv venv
