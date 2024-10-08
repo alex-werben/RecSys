@@ -15,24 +15,28 @@ jobs:
         python-version: [3.12]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+
+    - name: Install Poetry
       run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel twine
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        python -m pip install -e .
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "export PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
+
+    - name: Install Dependencies
+      run: poetry install
+  
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        flake8 --exclude venv --count --select=E9,F63,F7,F82 --show-source
+        poetry flake8 --exclude venv --count --select=E9,F63,F7,F82 --show-source
         # check code-style
-        flake8 --exclude venv --ignore=Q000,D100,E402,I201,I100,D104 --max-line-length=127 --count --exit-zero
+        poetry flake8 --exclude venv --ignore=Q000,D100,E402,I201,I100,D104 --max-line-length=127 --count --exit-zero
+
     - name: Test with pytest
       run: |
-        pytest tests/
+        poetry run pytest
     
