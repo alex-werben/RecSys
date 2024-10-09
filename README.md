@@ -6,14 +6,13 @@ Implementation of some basic recommendation system algorithms.
 
 ## Installation:
 ~~~
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+pip install poetry
+poetry install
 ~~~
 
 ## Test:
 ~~~
-pytest tests/
+poetry pytest tests/
 ~~~
 
 
@@ -39,3 +38,17 @@ Process loads model and dataset, after that it makes prediction and saves it.
 python pipelines/eval.py
 ~~~
 Process for scoring model, metrics are saved in /models in .json format.
+
+## MLFLow
+
+### Start MLFLow
+
+~~~
+mlflow ui
+~~~
+
+### Run entry point
+
+~~~
+mlflow run . --entry-point <entry_point_name> --env-manager local --experiment-name <exp_name> --run-name <run_name>
+~~~

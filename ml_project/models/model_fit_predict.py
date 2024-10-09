@@ -48,7 +48,7 @@ def evaluate_model(
     train_params: TrainParams,
     metric_params: tp.Dict[str, tp.Dict[str, tp.Any]],  # TODO: create dataclass
     predict_params: PredictParams
-) -> tp.Dict[str, float]:
+) -> tp.Tuple[ModelBase, tp.Dict[str, float]]:
     """Evaluate model.
 
     Args:
@@ -59,17 +59,19 @@ def evaluate_model(
         predict_params (PredictParams): predict parameters
 
     Returns:
-        (tp.Dict[str, float]): dict with metric names and values
+        (Tuple[ModelBase, tp.Dict[str, float]]): model and dict with metric names and values
     """
     dataset = Dataset.construct(interactions_df=train_df)
 
-    model = train_model(
-        dataset=dataset,
-        train_params=train_params
-    )
+    if train_params.model_type == "SVD":
+        model = PureSVDModel()
+
+    model.fit(dataset)
+
+    users_to_predict = test_df[Columns.User].unique()
 
     recs_df = model.recommend(
-        users=test_df[Columns.User].unique(),
+        users=users_to_predict,
         dataset=dataset,
         **predict_params
     )
@@ -83,7 +85,7 @@ def evaluate_model(
         prev_interactions=train_df,
     )
 
-    return metrics
+    return model, metrics
 
 
 def serialize_object(

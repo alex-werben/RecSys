@@ -7,3 +7,5 @@ outputs/**/
 .DS_Store
 .env
 .pytest_cache/
+.vscode/
+mlruns/
