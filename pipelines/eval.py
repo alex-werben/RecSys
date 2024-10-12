@@ -39,7 +39,7 @@ def main(conf: DictConfig):
 def evaluate_with_mlflow(conf: DictConfig):
     with mlflow.start_run() as run:
         run_id = run.info.run_id
-        
+
         interactions_df = read_data(
             path=conf.data.input.interactions.path,
             read_params=conf.data.input.interactions.read_params
@@ -49,7 +49,7 @@ def evaluate_with_mlflow(conf: DictConfig):
         transformer = InteractionsTransformer(interactions_column_params=conf.data.input.interactions.column_params)
 
         interactions_df = transformer.fit_transform(interactions_df)
-        
+
         mlflow.log_artifact(
             local_path=conf.data.input.interactions.path,
             artifact_path="datasets"
@@ -67,7 +67,7 @@ def evaluate_with_mlflow(conf: DictConfig):
         logger.info(f"{test_df.shape=}")
 
         test_df = test_df[test_df[Columns.User].isin(train_df[Columns.User])]
-        
+
         logger.info(f"{test_df.shape=}")
 
         model, metrics = evaluate_model(
@@ -82,8 +82,7 @@ def evaluate_with_mlflow(conf: DictConfig):
         mlflow.log_metrics(metrics=metrics)
 
         mlflow.register_model(model_uri=model_uri, name="RecSysModel")
-        
-    
+
 
 def evaluate(conf: DictConfig):
     """Evaluate pipeline.
@@ -127,7 +126,6 @@ def evaluate(conf: DictConfig):
     )
 
     logger.info(f"Metrics is:\n{metrics}")
-
 
     with open(conf.data.output.metric_path, "w") as metric_file:
         json.dump(metrics, metric_file)

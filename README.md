@@ -4,15 +4,36 @@ Implementation of some basic recommendation system algorithms.
 ## Requirements
 - Python 3.12.2 or higher
 
-## Installation:
+## Installation with Poetry:
 ~~~
 pip install poetry
+
+
 poetry install
 ~~~
 
+## Some commands with Poetry
+```
+# If you want to create .venv in project dir, run command below, else skip it
+poetry config virtualenvs.in-project true
+
+# If you want to run scripts by "python <script_name.py>", run command below,
+# or you'll need to run it by "poetry run python <script_name.py>"
+poetry shell
+
+# You can check which python interpreter is used by running:
+which python
+
+# To deactivate the virtual environment and exit new shell:
+exit
+
+# To deactivate the virtual environment without leaving new shell:
+deactivate
+```
+
 ## Test:
 ~~~
-poetry pytest tests/
+pytest tests/
 ~~~
 
 
