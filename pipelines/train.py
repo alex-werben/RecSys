@@ -44,7 +44,6 @@ def main(conf: DictConfig):
         read_params=conf.data.input.interactions.read_params
     )
     logger.info(f"{interactions_df.shape=}")
-    mlflow.log_text(f"{interactions_df.shape=}")
 
     transformer = InteractionsTransformer(interactions_column_params=conf.data.input.interactions.column_params)
 
@@ -59,7 +58,6 @@ def main(conf: DictConfig):
         dataset=dataset,
         train_params=conf.train_params
     )
-    mlflow.log_text("Fit done")
 
     logger.info("Saving model")
     s3_conn.put(
