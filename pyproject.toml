@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "recsys"
+name = "RecSys"
 version = "0.1.0"
 description = "MLOps project for building recommendations."
 authors = ["alexwerben <crystall.werben@gmail.com>"]

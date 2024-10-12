@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -33,16 +32,15 @@ jobs:
     - name: Install Dependencies
       run: |
         poetry install
-        poetry shell
   
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        flake8 --exclude .venv --count --select=E9,F63,F7,F82 --show-source
+        poetry run flake8 --exclude .venv --count --select=E9,F63,F7,F82 --show-source
         # check code-style
-        flake8 --exclude .venv --ignore=Q000,D100,E402,I201,I100,D104 --max-line-length=127 --count --exit-zero
+        poetry run flake8 --exclude .venv --ignore=Q000,D100,E402,I201,I100,D104 --max-line-length=127 --count --exit-zero
 
     - name: Test with pytest
       run: |
-        python pytest
+        poetry run pytest
     
