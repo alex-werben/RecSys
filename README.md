@@ -31,6 +31,16 @@ exit
 deactivate
 ```
 
+## DVC setup:
+```
+dvc init
+dvc remote add -d <remote_name> s3://<bucket_name>/<dataset_folder>
+
+dvc remote modify <remote_name> access_key_id <your-access-key-id>
+dvc remote modify <remote_name> secret_access_key <your-secret-access-key>
+dvc remote modify <remote_name> endpointurl https://storage.yandexcloud.net
+```
+
 ## Test:
 ~~~
 pytest tests/

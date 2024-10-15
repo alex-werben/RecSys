@@ -1,6 +1,7 @@
 import pandas as pd
 import typing as tp
 
+from rectools import Columns
 from rectools.model_selection.random_split import RandomSplitter
 from rectools.metrics.base import MetricAtK
 from rectools.metrics import Precision, Recall
@@ -83,3 +84,31 @@ def prepare_metrics_dict(
         )
 
     return metric_dict
+
+def normalize_weight(interactions_df: pd.DataFrame) -> pd.DataFrame:
+    
+    # Actually this is MinMaxScaler but let it be from scratch
+    max_weight = interactions_df[Columns.Weight].max()
+    min_weight = interactions_df[Columns.Weight].min()
+    
+    interactions_df[Columns.Weight] = (interactions_df[Columns.Weight] - min_weight) / (max_weight - min_weight)
+    
+    return interactions_df
+
+def filter_interactions(interactions_df: pd.DataFrame) -> pd.DataFrame:
+    interactions_df = interactions_df[interactions_df[Columns.Weight] > 0]
+    
+    return interactions_df
+
+def group_interactions(interactions_df: pd.DataFrame) -> pd.DataFrame:
+    interactions_df = (
+        interactions_df
+        .groupby(Columns.UserItem)
+        .agg({
+            Columns.Weight: "sum",
+            Columns.Datetime: "last"
+        })
+        .reset_index()
+    )
+    
+    return interactions_df

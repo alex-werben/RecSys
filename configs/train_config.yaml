@@ -6,7 +6,7 @@ use_mlflow: False
 data:
   input:
     interactions: 
-      path: data/raw/BX-Book-Ratings.csv
+      path: data/raw/initial_interactions.csv
       read_params:
         sep: ;
         encoding: unicode-escape
@@ -18,6 +18,7 @@ data:
     user_features_path: data/raw/BX-Users.csv
     item_features_path: data/raw/BX-Books.csv
   output:
+    interactions_path: data/processed/interactions.csv
     model_path: models/model.pkl
     dataset_path: models/dataset.pkl
     recommendations_path: models/recommendations.csv

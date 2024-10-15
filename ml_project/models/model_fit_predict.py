@@ -2,7 +2,17 @@ import pickle
 import pandas as pd
 import typing as tp
 from rectools.models.base import ModelBase
-from rectools.models import PureSVDModel
+from rectools.models import (
+    PureSVDModel,
+    DSSMModel,
+    LightFMWrapperModel,
+    ImplicitALSWrapperModel,
+    ImplicitItemKNNWrapperModel,
+    PopularModel,
+    PopularInCategoryModel,
+    RandomModel
+)
+from implicit.als import AlternatingLeastSquares
 from rectools.metrics import calc_metrics
 from rectools.dataset import Dataset
 from rectools.columns import Columns
@@ -18,6 +28,14 @@ def train_model(
     """Train model."""
     if train_params.model_type == "SVD":
         model = PureSVDModel()
+    elif train_params.model_type == "ImplicitALSWrapperModel":
+        model = ImplicitALSWrapperModel(
+            model=AlternatingLeastSquares()
+        )
+    elif train_params.model_type == "RandomModel":
+        model = RandomModel()
+    elif train_params.model_type == "PopularModel":
+        model = PopularModel()
 
     model.fit(dataset)
 

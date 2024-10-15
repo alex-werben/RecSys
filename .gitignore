@@ -10,3 +10,4 @@ outputs/**/
 .pytest_cache/
 .vscode/
 mlruns/
+extra-data/
