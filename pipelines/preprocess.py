@@ -45,7 +45,7 @@ def main(conf: DictConfig):
     dict_items = conf.data.input.interactions.column_params.items()
     inverse_column_name_mapper = {v: k for k, v in dict_items}
     interactions_df[Columns.Datetime] = "2024-08-23"
-    interactions_df = interactions_df.rename(columns=inverse_column_name_mapper)
+    # interactions_df = interactions_df.rename(columns=inverse_column_name_mapper)
 
     interactions_df.info()
 

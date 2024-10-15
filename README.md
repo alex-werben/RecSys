@@ -34,11 +34,23 @@ deactivate
 ## DVC setup:
 ```
 dvc init
+# Remote variant
 dvc remote add -d <remote_name> s3://<bucket_name>/<dataset_folder>
 
 dvc remote modify <remote_name> access_key_id <your-access-key-id>
 dvc remote modify <remote_name> secret_access_key <your-secret-access-key>
 dvc remote modify <remote_name> endpointurl https://storage.yandexcloud.net
+
+
+# Local variant
+dvc remote add <local_name> <local_path>
+
+dvc add <file_to_track>
+dvc commit
+git add .
+git commit -m <message>
+dvc push -r <local_name>
+git push
 ```
 
 ## Test:

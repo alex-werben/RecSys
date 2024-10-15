@@ -17,6 +17,7 @@ from ml_project.data import (
     split_data_for_train_test
 )
 from ml_project.models import evaluate_model
+from dvc.api import get_url
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler(sys.stdout)
@@ -92,8 +93,15 @@ def evaluate(conf: DictConfig):
     """
     logger.info("Starting pipeline")
 
+    version = "v1"
+    get_url(
+        path="data/processed/interactions.csv",
+        repo="/Users/alexander/Developer/RecSys",
+        rev="v1"
+    )
+
     interactions_df = read_data(
-        path=conf.data.input.interactions.path,
+        path=conf.data.output.interactions_path,
         read_params=conf.data.input.interactions.read_params
     )
     logger.info(f"{interactions_df.shape=}")
