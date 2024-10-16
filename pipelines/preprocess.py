@@ -33,9 +33,6 @@ def main(conf: DictConfig):
         conf (DictConfig): hydra config.
     """
     logger.info("Starting pipeline")
-    # s3_conn = S3Connector(
-    #     bucket_name=conf.s3_params.bucket_name
-    # )
 
     interactions_df = read_data(
         path=conf.data.input.interactions.path,
@@ -45,19 +42,15 @@ def main(conf: DictConfig):
     dict_items = conf.data.input.interactions.column_params.items()
     inverse_column_name_mapper = {v: k for k, v in dict_items}
     interactions_df[Columns.Datetime] = "2024-08-23"
-    # interactions_df = interactions_df.rename(columns=inverse_column_name_mapper)
+    interactions_df = interactions_df.rename(columns=inverse_column_name_mapper)
 
-    interactions_df.info()
-
-    # interactions_df = group_interactions(interactions_df=interactions_df)
+    interactions_df = group_interactions(interactions_df=interactions_df)
     
-    # interactions_df = filter_interactions(interactions_df=interactions_df)
+    interactions_df = filter_interactions(interactions_df=interactions_df)
+    
+    # interactions_df = normalize_weight(interactions_df=interactions_df)
     
     interactions_df.to_csv(conf.data.output.interactions_path)
-    # s3_conn.put(
-    #     obj=interactions_df,
-    #     path=conf.data.output.interactions_path
-    # )
 
 
 if __name__ == "__main__":
