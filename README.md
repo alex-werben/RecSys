@@ -93,5 +93,5 @@ mlflow ui
 ### Run entry point
 
 ~~~
-mlflow run . --entry-point <entry_point_name> --env-manager local --experiment-name <exp_name> --run-name <run_name> -P <param-name>=<param-value>
+mlflow run . -e <entry_point_name> --env-manager local --experiment-name <exp_name> --run-name <run_name> -P <param-name>=<param-value>
 ~~~

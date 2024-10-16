@@ -3,13 +3,13 @@ hydra:
     chdir: False  # This is used to fix problem with changind working directory that affects path problem
 
 use_mlflow: True
-version: v7
+interactions_version: v8
 data:
   input:
     interactions: 
       path: data/raw/initial_interactions.csv
       read_params:
-        # sep: ;
+        sep: ;
         encoding: unicode-escape
       column_params:
         user_id: User-ID
@@ -25,7 +25,7 @@ data:
     recommendations_path: models/recommendations.csv
     metric_path: models/metrics.json
 train_params:
-  model_type: SVD
+  model_type: ImplicitALSWrapperModel
 splitter_params:
     test_fold_frac: 0.1
     n_splits: 1

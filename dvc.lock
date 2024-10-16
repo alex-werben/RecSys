@@ -1,0 +1,24 @@
+schema: '2.0'
+stages:
+  preprocessing:
+    cmd: python pipelines/preprocess.py
+    deps:
+    - path: data/raw/initial_interactions.csv
+      hash: md5
+      md5: 4bc5b02ebcbb790ecc58658fc4215a41
+      size: 29532495
+    - path: pipelines/preprocess.py
+      hash: md5
+      md5: 96cd5fc4d585ac4e630dcabe90e6de63
+      size: 1721
+  evaluate_model:
+    cmd: mlflow run . -e eval-pipeline --env-manager local
+    deps:
+    - path: data/processed/interactions.csv
+      hash: md5
+      md5: 5d519b81ae1cb731161c51b27c081d7d
+      size: 17524670
+    - path: pipelines/eval.py
+      hash: md5
+      md5: d1eb208110ad96e9ba1dd791b8cf40f4
+      size: 3012

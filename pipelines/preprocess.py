@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import hydra
 from omegaconf import DictConfig
 from rectools import Columns
+from sklearn.preprocessing import LabelEncoder
 
 project_path = str(Path(__file__).parent.parent)
 sys.path.append(project_path)
@@ -41,6 +42,8 @@ def main(conf: DictConfig):
     inverse_column_name_mapper = {v: k for k, v in dict_items}
     interactions_df[Columns.Datetime] = "2024-08-23"
     interactions_df = interactions_df.rename(columns=inverse_column_name_mapper)
+    le = LabelEncoder()
+    interactions_df[Columns.Item] = le.fit_transform(interactions_df[Columns.Item]).astype(int) # TODO: move to preprocessing
 
     interactions_df = group_interactions(interactions_df=interactions_df)
     
@@ -48,7 +51,7 @@ def main(conf: DictConfig):
     
     interactions_df = normalize_weight(interactions_df=interactions_df)
     
-    interactions_df.to_csv(conf.data.output.interactions_path)
+    interactions_df.to_csv(conf.data.output.interactions_path, index=False)
 
 
 if __name__ == "__main__":

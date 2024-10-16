@@ -30,7 +30,11 @@ def train_model(
         model = PureSVDModel()
     elif train_params.model_type == "ImplicitALSWrapperModel":
         model = ImplicitALSWrapperModel(
-            model=AlternatingLeastSquares()
+            model=AlternatingLeastSquares(
+                iterations=5,
+                num_threads=12
+            ),
+            verbose=1
         )
     elif train_params.model_type == "RandomModel":
         model = RandomModel()
