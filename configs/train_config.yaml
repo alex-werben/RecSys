@@ -2,7 +2,7 @@ hydra:
   job:
     chdir: False  # This is used to fix problem with changind working directory that affects path problem
 
-use_mlflow: False
+use_mlflow: True
 data:
   input:
     interactions: 

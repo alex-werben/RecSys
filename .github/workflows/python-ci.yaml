@@ -3,7 +3,7 @@ name: Python package CI
 on:
   push:
     branches:
-      - '**'  
+      - main
 
 jobs:
   build:

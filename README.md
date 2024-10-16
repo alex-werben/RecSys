@@ -46,10 +46,10 @@ dvc remote modify <remote_name> endpointurl https://storage.yandexcloud.net
 dvc remote add <local_name> <local_path>
 
 dvc add <file_to_track>
-dvc commit
+dvc push -r <local_name>
 git add .
 git commit -m <message>
-dvc push -r <local_name>
+git tag -a <tag-name> -m <tag-message>
 git push
 ```
 

@@ -6,4 +6,6 @@ entry_points:
   predict-pipeline:
     command: "python pipelines/predict.py"
   eval-pipeline:
-    command: "python pipelines/eval.py"
+    parameters:
+      version: {type: str, default: "v1"}
+    command: "python pipelines/eval.py --version {version}"

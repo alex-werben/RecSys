@@ -12,8 +12,6 @@ project_path = str(Path(__file__).parent.parent)
 sys.path.append(project_path)
 
 from ml_project.data import read_data, group_interactions, filter_interactions, normalize_weight
-from ml_project.models import predict_model
-from ml_project.connections import S3Connector
 
 load_dotenv()
 logger = logging.getLogger(__name__)
