@@ -3,12 +3,13 @@ hydra:
     chdir: False  # This is used to fix problem with changind working directory that affects path problem
 
 use_mlflow: True
+version: v7
 data:
   input:
     interactions: 
       path: data/raw/initial_interactions.csv
       read_params:
-        sep: ;
+        # sep: ;
         encoding: unicode-escape
       column_params:
         user_id: User-ID
