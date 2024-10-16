@@ -48,7 +48,7 @@ def main(conf: DictConfig):
     
     interactions_df = filter_interactions(interactions_df=interactions_df)
     
-    # interactions_df = normalize_weight(interactions_df=interactions_df)
+    interactions_df = normalize_weight(interactions_df=interactions_df)
     
     interactions_df.to_csv(conf.data.output.interactions_path)
 
