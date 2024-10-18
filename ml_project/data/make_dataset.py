@@ -8,13 +8,10 @@ from rectools.metrics import Precision, Recall
 from rectools.dataset import Interactions
 
 from ml_project.common import (
-    LastNSplitterParams,
-    RandomSplitterParams,
+    SplitterParams,
     ReadParams,
-    TimeRangeSplitterParams
+    MetricParams
 )
-
-SplitterParams = tp.Union[TimeRangeSplitterParams, LastNSplitterParams, RandomSplitterParams]
 
 
 def read_data(
@@ -61,12 +58,12 @@ def split_data_for_train_test(
 
 
 def prepare_metrics_dict(
-    metric_params: tp.Dict[str, tp.Dict[str, tp.Any]]
+    metric_params: MetricParams
 ) -> tp.Dict[str, MetricAtK]:
     """Prepare dict with metric names as keys and metric classes as values.
 
     Args:
-        metric_params (tp.Dict[str, tp.Dict[str, tp.Any]]): metric parameters
+        metric_params (MetricParams): metric parameters
 
     Returns:
         tp.Dict[str, MetricAtK]: dict with metric names and classes
@@ -77,30 +74,35 @@ def prepare_metrics_dict(
         "Recall": Recall,
         "Precision": Precision
     }
-
-    for metric_name in metric_params.keys():
-        metric_dict[metric_name] = (
-            metrics[metric_name](**metric_params[metric_name])
-        )
+    metrics_cnt = len(metric_params.names_list)
+    for i in range(metrics_cnt):
+        name = metric_params.names_list[i]
+        params = metric_params.params_list[i]
+        metric_dict[name] = metrics[name](**params)
 
     return metric_dict
 
+
 def normalize_weight(interactions_df: pd.DataFrame) -> pd.DataFrame:
-    
+    """Scale weight in interactions to [0, 1]."""
     # Actually this is MinMaxScaler but let it be from scratch
     max_weight = interactions_df[Columns.Weight].max()
     min_weight = interactions_df[Columns.Weight].min()
-    
+
     interactions_df[Columns.Weight] = (interactions_df[Columns.Weight] - min_weight) / (max_weight - min_weight)
-    
+
     return interactions_df
+
 
 def filter_interactions(interactions_df: pd.DataFrame) -> pd.DataFrame:
+    """Filter interactions with 0 weight."""
     interactions_df = interactions_df[interactions_df[Columns.Weight] > 0]
-    
+
     return interactions_df
 
+
 def group_interactions(interactions_df: pd.DataFrame) -> pd.DataFrame:
+    """Group interactions by user-item pair."""
     interactions_df = (
         interactions_df
         .groupby(Columns.UserItem)
@@ -110,5 +112,5 @@ def group_interactions(interactions_df: pd.DataFrame) -> pd.DataFrame:
         })
         .reset_index()
     )
-    
+
     return interactions_df

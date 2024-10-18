@@ -1,24 +1,24 @@
+import multiprocessing
 import pickle
 import pandas as pd
 import typing as tp
 from rectools.models.base import ModelBase
 from rectools.models import (
     PureSVDModel,
-    DSSMModel,
-    LightFMWrapperModel,
-    ImplicitALSWrapperModel,
-    ImplicitItemKNNWrapperModel,
-    PopularModel,
-    PopularInCategoryModel,
-    RandomModel
+    ImplicitALSWrapperModel
 )
 from implicit.als import AlternatingLeastSquares
 from rectools.metrics import calc_metrics
 from rectools.dataset import Dataset
 from rectools.columns import Columns
-from ml_project.common.predict_params import PredictParams
-from ml_project.common.train_params import TrainParams
+from ml_project.common import (
+    MetricParams,
+    PredictParams,
+    TrainParams
+)
 from ml_project.data.make_dataset import prepare_metrics_dict
+
+MAX_CPU = multiprocessing.cpu_count()
 
 
 def train_model(
@@ -26,20 +26,17 @@ def train_model(
     train_params: TrainParams,
 ) -> ModelBase:
     """Train model."""
-    if train_params.model_type == "SVD":
-        model = PureSVDModel()
+
+    if train_params.model_type == "PureSVDModel":
+        model = PureSVDModel(**train_params.model_params)
     elif train_params.model_type == "ImplicitALSWrapperModel":
         model = ImplicitALSWrapperModel(
             model=AlternatingLeastSquares(
-                iterations=5,
-                num_threads=12
+                **train_params.model_params,
+                num_threads=MAX_CPU
             ),
             verbose=1
         )
-    elif train_params.model_type == "RandomModel":
-        model = RandomModel()
-    elif train_params.model_type == "PopularModel":
-        model = PopularModel()
 
     model.fit(dataset)
 
@@ -68,7 +65,7 @@ def evaluate_model(
     train_df: pd.DataFrame,
     test_df: pd.DataFrame,
     train_params: TrainParams,
-    metric_params: tp.Dict[str, tp.Dict[str, tp.Any]],  # TODO: create dataclass
+    metric_params: MetricParams,
     predict_params: PredictParams
 ) -> tp.Tuple[ModelBase, tp.Dict[str, float]]:
     """Evaluate model.
@@ -77,7 +74,7 @@ def evaluate_model(
         train_df (pd.DataFrame): train interactions
         test_df (pd.DataFrame): test interactions
         train_params (TrainParams): train parameters
-        metric_params (tp.Dict[str, tp.Dict[str, tp.Any]]): metric parameters
+        metric_params (MetricParams): metric parameters
         predict_params (PredictParams): predict parameters
 
     Returns:

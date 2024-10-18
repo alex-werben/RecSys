@@ -3,44 +3,58 @@ hydra:
     chdir: False  # This is used to fix problem with changind working directory that affects path problem
 
 use_mlflow: True
+
 interactions_version: v8
+
 data:
   input:
-    interactions: 
-      path: data/raw/initial_interactions.csv
+    interactions:
+      path: 
+        initial: data/raw/initial_interactions.csv
+        processed: data/processed/interactions.csv
       read_params:
         sep: ;
         encoding: unicode-escape
-      column_params:
+      column_names:
         user_id: User-ID
         item_id: ISBN
         weight: Book-Rating
         datetime: datetime
-    user_features_path: data/raw/BX-Users.csv
-    item_features_path: data/raw/BX-Books.csv
+
   output:
-    interactions_path: data/processed/interactions.csv
     model_path: models/model.pkl
     dataset_path: models/dataset.pkl
     recommendations_path: models/recommendations.csv
     metric_path: models/metrics.json
+
 train_params:
-  model_type: ImplicitALSWrapperModel
-splitter_params:
-    test_fold_frac: 0.1
-    n_splits: 1
+  model_type: PureSVDModel
+  model_params:
     random_state: 23
-    filter_cold_users: False
-    filter_cold_items: False
-    filter_already_seen: False
+    factors: 20
+
+splitter_params:
+  test_fold_frac: 0.1
+  n_splits: 1
+  random_state: 23
+  filter_cold_users: False
+  filter_cold_items: False
+  filter_already_seen: False
+
 metric_params:
-  Recall:
-    k: 100
-  Precision:
-    k: 100
+  names_list:
+    - Recall
+    - Precision
+  params_list:
+    - 
+      k: 100
+    - 
+      k: 100
+
 predict_params:
   k: 10
   filter_viewed: False
   add_rank_col: True
+
 s3_params:
   bucket_name: alex-werben-recsys-bucket

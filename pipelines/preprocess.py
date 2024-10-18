@@ -20,10 +20,11 @@ handler = logging.StreamHandler(sys.stdout)
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
+
 @hydra.main(
     version_base="1.1",
     config_path="../configs",
-    config_name="train_config"
+    config_name="train_svd"
 )
 def main(conf: DictConfig):
     """Predict pipeline.
@@ -34,24 +35,26 @@ def main(conf: DictConfig):
     logger.info("Starting pipeline")
 
     interactions_df = read_data(
-        path=conf.data.input.interactions.path,
+        path=conf.data.input.interactions.path.initial,
         read_params=conf.data.input.interactions.read_params
     )
 
-    dict_items = conf.data.input.interactions.column_params.items()
+    dict_items = conf.data.input.interactions.column_names.items()
     inverse_column_name_mapper = {v: k for k, v in dict_items}
-    interactions_df[Columns.Datetime] = "2024-08-23"
+    interactions_df[Columns.Datetime] = datetime.date.today()
     interactions_df = interactions_df.rename(columns=inverse_column_name_mapper)
     le = LabelEncoder()
-    interactions_df[Columns.Item] = le.fit_transform(interactions_df[Columns.Item]).astype(int) # TODO: move to preprocessing
+
+    interactions_df[Columns.Item] = le.fit_transform(interactions_df[Columns.Item]).astype(int)
+    interactions_df[Columns.User] = le.fit_transform(interactions_df[Columns.User]).astype(int)
 
     interactions_df = group_interactions(interactions_df=interactions_df)
-    
+
     interactions_df = filter_interactions(interactions_df=interactions_df)
-    
+
     interactions_df = normalize_weight(interactions_df=interactions_df)
-    
-    interactions_df.to_csv(conf.data.output.interactions_path, index=False)
+
+    interactions_df.to_csv(conf.data.input.interactions.path.processed, index=False)
 
 
 if __name__ == "__main__":

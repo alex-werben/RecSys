@@ -4791,6 +4791,17 @@ pure-eval = "*"
 tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 
 [[package]]
+name = "svgwrite"
+version = "1.4.3"
+description = "A Python library to create SVG drawings."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "svgwrite-1.4.3-py3-none-any.whl", hash = "sha256:bb6b2b5450f1edbfa597d924f9ac2dd099e625562e492021d7dd614f65f8a22d"},
+    {file = "svgwrite-1.4.3.zip", hash = "sha256:a8fbdfd4443302a6619a7f76bc937fc683daf2628d9b737c891ec08b8ce524c3"},
+]
+
+[[package]]
 name = "tabulate"
 version = "0.9.0"
 description = "Pretty-print tabular data"
@@ -4880,6 +4891,22 @@ files = [
 [package.extras]
 docs = ["myst-parser", "pydata-sphinx-theme", "sphinx"]
 test = ["argcomplete (>=3.0.3)", "mypy (>=1.7.0)", "pre-commit", "pytest (>=7.0,<8.2)", "pytest-mock", "pytest-mypy-testing"]
+
+[[package]]
+name = "tree"
+version = "0.2.4"
+description = "A package for creating and drawing trees"
+optional = false
+python-versions = "*"
+files = [
+    {file = "Tree-0.2.4.tar.gz", hash = "sha256:f84d8ec9bf50dd69f551da78925a23d110864e7706551f590cdade27646f7883"},
+]
+
+[package.dependencies]
+click = "*"
+Pillow = "*"
+setuptools = "*"
+svgwrite = "*"
 
 [[package]]
 name = "twine"
@@ -5286,4 +5313,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12,<3.13"
-content-hash = "9563c139c02e4b7c2769c684cddf9c727bc3fba579b05b15883c47bec96fb601"
+content-hash = "f630f1d512e702e0d41614cf485937e40440261ec75c481e81d9ae8dd2b0c74a"

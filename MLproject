@@ -1,9 +1,5 @@
 name: Recommender_System
 
 entry_points:
-  train-pipeline:
-    command: "python pipelines/train.py"
-  predict-pipeline:
-    command: "python pipelines/predict.py"
   eval-pipeline:
     command: "python pipelines/eval.py"

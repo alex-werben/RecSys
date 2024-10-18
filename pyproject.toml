@@ -27,6 +27,7 @@ dvc-s3 = "^3.2.0"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
+tree = "^0.2.4"
 
 [build-system]
 requires = ["poetry-core"]

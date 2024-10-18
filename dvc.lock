@@ -9,16 +9,11 @@ stages:
       size: 29532495
     - path: pipelines/preprocess.py
       hash: md5
-      md5: 96cd5fc4d585ac4e630dcabe90e6de63
-      size: 1721
+      md5: 8b689a30d71ec90785efac50e19a5dae
+      size: 1811
   evaluate_model:
     cmd: mlflow run . -e eval-pipeline --env-manager local
-    deps:
-    - path: data/processed/interactions.csv
-      hash: md5
-      md5: 5d519b81ae1cb731161c51b27c081d7d
-      size: 17524670
-    - path: pipelines/eval.py
-      hash: md5
-      md5: d1eb208110ad96e9ba1dd791b8cf40f4
-      size: 3012
+  train_model:
+    cmd: python pipelines/train.py
+  predict_model:
+    cmd: python pipelines/predict.py

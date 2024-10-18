@@ -5,13 +5,12 @@ from omegaconf import DictConfig
 from pathlib import Path
 from rectools.dataset import Dataset
 from dotenv import load_dotenv
-import mlflow
 
 project_path = str(Path(__file__).parent.parent)
 sys.path.append(project_path)
 
 from ml_project.connections import S3Connector
-from ml_project.data import read_data, InteractionsTransformer
+from ml_project.data import read_data
 from ml_project.models import train_model
 
 logger = logging.getLogger(__name__)
@@ -23,7 +22,7 @@ logger.addHandler(handler)
 @hydra.main(
     version_base="1.1",
     config_path="../configs",
-    config_name="train_config"
+    config_name="train_svd"
 )
 def main(conf: DictConfig):
     """Train pipeline.
@@ -40,14 +39,9 @@ def main(conf: DictConfig):
     )
 
     interactions_df = read_data(
-        path=conf.data.input.interactions.path,
-        read_params=conf.data.input.interactions.read_params
+        path=conf.data.input.interactions.path.processed
     )
     logger.info(f"{interactions_df.shape=}")
-
-    transformer = InteractionsTransformer(interactions_column_params=conf.data.input.interactions.column_params)
-
-    interactions_df = transformer.fit_transform(interactions_df)
 
     logger.info("interactions_df.info():")
     interactions_df.info()

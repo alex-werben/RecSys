@@ -16,12 +16,13 @@ logger = logging.getLogger(__name__)
 handler = logging.StreamHandler(sys.stdout)
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
+load_dotenv()
 
 
 @hydra.main(
     version_base="1.1",
     config_path="../configs",
-    config_name="train_config"
+    config_name="train_svd"
 )
 def main(conf: DictConfig):
     """Predict pipeline.
@@ -30,7 +31,6 @@ def main(conf: DictConfig):
         conf (DictConfig): hydra config.
     """
     logger.info("Starting pipeline")
-    load_dotenv()
     s3_conn = S3Connector(
         bucket_name=conf.s3_params.bucket_name
     )
