@@ -1,0 +1,18 @@
+stages:
+  preprocessing:
+    cmd: python pipelines/preprocess.py
+    deps:
+      - pipelines/preprocess.py
+      - data/raw/initial_interactions.csv
+
+
+  train_model:
+    cmd: python pipelines/train.py
+    # outs:
+    #   - models/model.pkl
+
+  predict_model:
+    cmd: python pipelines/predict.py
+
+  evaluate_model:
+    cmd: mlflow run . -e eval-pipeline --env-manager local

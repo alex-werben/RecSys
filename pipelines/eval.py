@@ -1,61 +1,103 @@
-import json
-import sys
-import os
-import datetime
 import logging
-import hydra
-from omegaconf import DictConfig
 from pathlib import Path
-from rectools.columns import Columns
+import sys
+
+import hydra
+import mlflow
+from omegaconf import DictConfig
 import pandas as pd
-import typing as tp
+from rectools.columns import Columns
+from rectools.dataset import Dataset
+from rectools.metrics import calc_metrics
 
-project_path = str(Path(__file__).parent.parent)
-sys.path.append(project_path)
+PROJECT_PATH = str(Path(__file__).parent.parent)
+sys.path.append(PROJECT_PATH)
 
-from ml_project.data.make_dataset import split_data_for_train_test
-from ml_project.data import read_data, process_interactions
-from ml_project.models import (
-    train_model,
-    evaluate_model,
+from ml_project.data.make_dataset import prepare_metrics_dict
+from ml_project.models.model_fit_predict import train_model
+
+from ml_project.data import (
+    split_data_for_train_test
 )
+from dvc.api import get_url
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler(sys.stdout)
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
-@hydra.main(version_base="1.1", config_path="../configs", config_name="train_config")
-def main(conf: DictConfig = None):
-    logger.info("Starting pipeline")
 
-    interactions_df = read_data(conf.data.input.interactions_path)
-    logger.info(f"{interactions_df.shape=}")
+@hydra.main(
+    version_base="1.1",
+    config_path="../configs",
+    config_name="train_svd"
+)
+def evaluate(conf: DictConfig):
+    with mlflow.start_run():
+        data_url = get_url(
+            path=conf.data.input.interactions.path.processed,
+            repo=PROJECT_PATH,
+            remote="local_storage",
+            rev=conf.interactions_version
+        )
 
-    interactions_df = process_interactions(interactions_df)
+        logger.info(f"{data_url=}")
 
-    interactions_df.info()
+        interactions_df = pd.read_csv(data_url)
 
-    train_df, test_df = split_data_for_train_test(interactions_df, conf.splitter_params)
+        interactions_df.info()
 
-    logger.info(f"{train_df.shape=}")
-    logger.info(f"{test_df.shape=}")
+        mlflow.log_param("interactions_version", conf.interactions_version)
+        mlflow.log_param("interactions_shape", interactions_df.shape)
 
-    test_df = test_df[test_df[Columns.User].isin(train_df[Columns.User])]
+        logger.info(f"Interactions version: {conf.interactions_version}")
+        logger.info(f"{interactions_df.shape=}")
 
-    logger.info(f"{test_df.shape=}")
+        logger.info("interactions_df.info():")
+        interactions_df.info()
 
-    metrics = evaluate_model(
-        train_df=train_df,
-        test_df=test_df,
-        train_params=conf.train_params
-    )
+        train_df, test_df = split_data_for_train_test(
+            interactions_df=interactions_df,
+            splitter_params=conf.splitter_params
+        )
 
-    logger.info(f"Metrics is:\n{metrics}")
+        logger.info(f"{train_df.shape=}")
+        logger.info(f"{test_df.shape=}")
 
-    with open(conf.data.output.metric_path, "w") as metric_file:
-        json.dump(metrics, metric_file)
+        test_df = test_df[test_df[Columns.User].isin(train_df[Columns.User])]
+        logger.info(f"{test_df.shape=}")
+        mlflow.log_param("train_df_shape", train_df.shape)
+        mlflow.log_param("test_df_shape", test_df.shape)
+
+        dataset = Dataset.construct(
+            interactions_df=interactions_df
+        )
+
+        mlflow.log_param("model_type", conf.train_params.model_type)
+        model = train_model(
+            dataset=dataset,
+            train_params=conf.train_params
+        )
+
+        users_to_predict = test_df[Columns.User].unique()
+
+        recs_df = model.recommend(
+            users=users_to_predict,
+            dataset=dataset,
+            **conf.predict_params
+        )
+
+        metrics_dict = prepare_metrics_dict(conf.metric_params)
+
+        metrics = calc_metrics(
+            metrics=metrics_dict,
+            reco=recs_df,
+            interactions=test_df,
+            prev_interactions=train_df,
+        )
+
+        mlflow.log_metrics(metrics=metrics)
 
 
 if __name__ == "__main__":
-    main()
+    evaluate()

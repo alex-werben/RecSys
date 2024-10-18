@@ -1,0 +1,5 @@
+name: Recommender_System
+
+entry_points:
+  eval-pipeline:
+    command: "python pipelines/eval.py"
