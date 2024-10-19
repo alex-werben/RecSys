@@ -16,10 +16,8 @@ def test_train_e2e(mock_s3_put):
 
         train(conf)
 
-        # assert os.path.exists(mock_s3_put, )
-        # assert os.path.exists(conf.data.output.model_path)
-        # assert os.path.exists(conf.data.output.dataset_path)
+        assert os.path.exists(conf.data.output.model_path)
+        assert os.path.exists(conf.data.output.dataset_path)
 
         os.remove(conf.data.output.model_path)
         os.remove(conf.data.output.dataset_path)
-        os.rmdir(dir_name)
