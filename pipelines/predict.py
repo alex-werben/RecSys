@@ -24,7 +24,7 @@ load_dotenv()
     config_path="../configs",
     config_name="train_svd"
 )
-def main(conf: DictConfig):
+def predict(conf: DictConfig):
     """Predict pipeline.
 
     Args:
@@ -56,4 +56,4 @@ def main(conf: DictConfig):
 
 
 if __name__ == "__main__":
-    main()
+    predict()

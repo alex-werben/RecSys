@@ -24,7 +24,7 @@ logger.addHandler(handler)
     config_path="../configs",
     config_name="train_svd"
 )
-def main(conf: DictConfig):
+def train(conf: DictConfig):
     """Train pipeline.
 
     Args:
@@ -69,4 +69,4 @@ def main(conf: DictConfig):
 
 
 if __name__ == "__main__":
-    main()
+    train()

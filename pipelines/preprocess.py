@@ -26,7 +26,7 @@ logger.addHandler(handler)
     config_path="../configs",
     config_name="train_svd"
 )
-def main(conf: DictConfig):
+def preprocess(conf: DictConfig):
     """Predict pipeline.
 
     Args:
@@ -58,4 +58,4 @@ def main(conf: DictConfig):
 
 
 if __name__ == "__main__":
-    main()
+    preprocess()

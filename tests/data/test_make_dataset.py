@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
-from ml_project.common import RandomSplitterParams
+from ml_project.common.splitter_params import RandomSplitterParams
 from ml_project.data import (
     read_data,
     split_data_for_train_test
