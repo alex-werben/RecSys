@@ -13,10 +13,9 @@ from rectools.metrics import calc_metrics
 PROJECT_PATH = str(Path(__file__).parent.parent)
 sys.path.append(PROJECT_PATH)
 
-from ml_project.data.make_dataset import prepare_metrics_dict
-from ml_project.models.model_fit_predict import train_model
-
+from ml_project.models import train_model
 from ml_project.data import (
+    prepare_metrics_dict,
     split_data_for_train_test
 )
 from dvc.api import get_url

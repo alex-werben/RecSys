@@ -6,7 +6,8 @@ from make_dataset import (
     split_data_for_train_test,
     filter_interactions,
     group_interactions,
-    normalize_weight
+    normalize_weight,
+    prepare_metrics_dict
 )
 from transformer import InteractionsTransformer
 
@@ -16,5 +17,6 @@ __all__ = [
     "InteractionsTransformer",
     "filter_interactions",
     "normalize_weight",
-    "group_interactions"
+    "group_interactions",
+    "prepare_metrics_dict"
 ]
