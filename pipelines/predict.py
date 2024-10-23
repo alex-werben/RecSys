@@ -52,7 +52,10 @@ def predict(conf: DictConfig):
 
     recs_df.info()
 
-    recs_df.to_csv(conf.data.output.recommendations_path, index=False)
+    s3_conn.put(
+        obj=recs_df,
+        path=conf.data.output.recommendations_path
+    )
 
 
 if __name__ == "__main__":

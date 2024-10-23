@@ -38,6 +38,28 @@ There are a few unit tests to check some modules and one integration test to che
 pytest tests/
 ```
 
+## Docker
+
+### Create your own image
+```
+# Build image
+docker build -t <username>/<image_name>:<version>
+```
+
+### Pull image from Docker Hub
+```
+docker pull alexwerben/recsys:v1
+```
+
+### Run container
+```
+# Run container
+docker run --name <container_name> --env-file .env -p 15000:15000 -d <username>/<image_name>:<version>
+
+# Get inside running container shell
+docker exec -it <container_name> bash
+```
+
 ## Project structure
 ```
 .
