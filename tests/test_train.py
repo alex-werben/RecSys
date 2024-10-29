@@ -14,6 +14,8 @@ def test_train_e2e(mock_s3_put):
         dir_name = conf.data.output.model_path.split('/')[0]
         os.makedirs(dir_name, exist_ok=True)
 
+        conf.data.input.interactions.path.processed = "tests/dataset_example.csv"
+
         train(conf)
 
         assert os.path.exists(conf.data.output.model_path)
