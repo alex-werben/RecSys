@@ -56,6 +56,7 @@ docker pull alexwerben/recsys:v3
 ```
 
 #### Run container
+
 ```
 # Run container
 docker run --name <container_name> --env-file .env -p 15000:15000 -d <username>/<image_name>:<version>
@@ -63,6 +64,7 @@ docker run --name <container_name> --env-file .env -p 15000:15000 -d <username>/
 # Get inside running container shell
 docker exec -it <container_name> bash
 ```
+- *There must be `.env` file in project dir with access and secret keys to connect to S3.*
 
 ### FastAPI
 
