@@ -5,6 +5,7 @@ MLOps project, production-ready recommender system.
 ### Requirements:
 
 - Python 3.12.2 or higher
+- Docker desktop
 
 ### Installation:
 ```
@@ -20,6 +21,8 @@ There're 4 main stages:
 3. **predict** - loads model and dataset from S3, makes predictions and saves them;
 4. **evaluate** - loads processed interactions, splits them into train and test data, fits model, predicts recommendations, calculates metrics.
 
+
+### With python and dvc
 Each stage can be called separately:
 ```
 python pipelines/preprocess.py
@@ -38,20 +41,21 @@ There are a few unit tests to check some modules and one integration test to che
 pytest tests/
 ```
 
-## Docker
+## With docker image and FastAPI
 
-### Create your own image
+### Docker setup
+#### Create your own image
 ```
 # Build image
 docker build -t <username>/<image_name>:<version>
 ```
 
-### Pull image from Docker Hub
+#### Pull prepared image from Docker Hub
 ```
-docker pull alexwerben/recsys:v1
+docker pull alexwerben/recsys:v3
 ```
 
-### Run container
+#### Run container
 ```
 # Run container
 docker run --name <container_name> --env-file .env -p 15000:15000 -d <username>/<image_name>:<version>
@@ -59,6 +63,16 @@ docker run --name <container_name> --env-file .env -p 15000:15000 -d <username>/
 # Get inside running container shell
 docker exec -it <container_name> bash
 ```
+
+### FastAPI end points
+
+These frameworks are used to setup backend server with some end points to access service. End points can be accessed after running container, they are:
+
+- 0.0.0.0:15000/ - start page, should output "Hello, world!";
+- 0.0.0.0:15000/ready - check if model exists in S3 storage and is ready for usage;
+- 0.0.0.0:15000/predict - downloads model from S3, makes prediction, saves recommendations;
+- 0.0.0.0:15000/predict_for_user?id={id} - gets recommendations for user with `user_id=={id}` and returns them in html format.
+
 
 ## Project structure
 ```
@@ -75,8 +89,10 @@ docker exec -it <container_name> bash
 ├── data
 │   ├── processed                      <- processed data
 │   └── raw                            <- raw data
+├── dockerfile                         <- docker config file
 ├── dvc.lock
 ├── dvc.yaml                           <- DVC pipeline file with stages
+├── LICENSE                            <- Apache license file
 ├── ml_project
 │   ├── common                         <- dataclasses for params from config
 │   ├── connections                    <- connectors to storages
