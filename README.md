@@ -64,8 +64,9 @@ docker run --name <container_name> --env-file .env -p 15000:15000 -d <username>/
 docker exec -it <container_name> bash
 ```
 
-### FastAPI end points
+### FastAPI
 
+#### End points
 These frameworks are used to setup backend server with some end points to access service. End points can be accessed after running container, they are:
 
 - 0.0.0.0:15000/ - start page, should output "Hello, world!";
@@ -73,6 +74,12 @@ These frameworks are used to setup backend server with some end points to access
 - 0.0.0.0:15000/predict - downloads model from S3, makes prediction, saves recommendations;
 - 0.0.0.0:15000/predict_for_user?id={id} - gets recommendations for user with `user_id=={id}` and returns them in html format.
 
+#### Request script
+
+There's also a FastAPI script that makes multiple requests to get recommendations for different users, and checks if model is ready. It can be done by running the following command:
+```
+python online_inference/requests/make_request.py
+```
 
 ## Project structure
 ```
