@@ -1,8 +1,10 @@
 import os
+import shutil
 
 from hydra import compose, initialize
 
 from pipelines import train
+
 
 def test_train_e2e(mock_s3_put):
     """Tests train pipeline end-to-end and checks output existence."""
@@ -19,5 +21,4 @@ def test_train_e2e(mock_s3_put):
         assert os.path.exists(conf.data.output.model_path)
         assert os.path.exists(conf.data.output.dataset_path)
 
-        os.remove(conf.data.output.model_path)
-        os.remove(conf.data.output.dataset_path)
+        shutil.rmtree(dir_name, ignore_errors=True)

@@ -5,6 +5,7 @@ MLOps project, production-ready recommender system.
 ### Requirements:
 
 - Python 3.12.2 or higher
+- Docker desktop
 
 ### Installation:
 ```
@@ -20,6 +21,8 @@ There're 4 main stages:
 3. **predict** - loads model and dataset from S3, makes predictions and saves them;
 4. **evaluate** - loads processed interactions, splits them into train and test data, fits model, predicts recommendations, calculates metrics.
 
+
+### With python and dvc
 Each stage can be called separately:
 ```
 python pipelines/preprocess.py
@@ -38,6 +41,48 @@ There are a few unit tests to check some modules and one integration test to che
 pytest tests/
 ```
 
+## With docker image and FastAPI
+
+### Docker setup
+#### Create your own image
+```
+# Build image
+docker build -t <username>/<image_name>:<version>
+```
+
+#### Pull prepared image from Docker Hub
+```
+docker pull alexwerben/recsys:v3
+```
+
+#### Run container
+
+```
+# Run container
+docker run --name <container_name> --env-file .env -p 15000:15000 -d <username>/<image_name>:<version>
+
+# Get inside running container shell
+docker exec -it <container_name> bash
+```
+- *There must be `.env` file in project dir with access and secret keys to connect to S3.*
+
+### FastAPI
+
+#### End points
+These frameworks are used to setup backend server with some end points to access service. End points can be accessed after running container, they are:
+
+- 0.0.0.0:15000/ - start page, should output "Hello, world!";
+- 0.0.0.0:15000/ready - check if model exists in S3 storage and is ready for usage;
+- 0.0.0.0:15000/predict - downloads model from S3, makes prediction, saves recommendations;
+- 0.0.0.0:15000/predict_for_user?id={id} - gets recommendations for user with `user_id=={id}` and returns them in html format.
+
+#### Request script
+
+There's also a FastAPI script that makes multiple requests to get recommendations for different users, and checks if model is ready. It can be done by running the following command:
+```
+python online_inference/requests/make_request.py
+```
+
 ## Project structure
 ```
 .
@@ -53,8 +98,10 @@ pytest tests/
 ├── data
 │   ├── processed                      <- processed data
 │   └── raw                            <- raw data
+├── dockerfile                         <- docker config file
 ├── dvc.lock
 ├── dvc.yaml                           <- DVC pipeline file with stages
+├── LICENSE                            <- Apache license file
 ├── ml_project
 │   ├── common                         <- dataclasses for params from config
 │   ├── connections                    <- connectors to storages

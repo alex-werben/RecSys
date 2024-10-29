@@ -2,6 +2,7 @@ import boto3
 import typing as tp
 import os
 from io import BytesIO
+from botocore.exceptions import ClientError
 import pickle
 
 
@@ -84,3 +85,26 @@ class S3Connector:
             return obj
         else:
             return status_code
+
+    def check_file_exists(self, path: str) -> bool:
+        """Check existence of file in S3.
+
+        Args:
+            path (str): path to file
+
+        Returns:
+            bool: whether file exists or not
+        """
+        try:
+            self.s3_conn.head_object(
+                Bucket=self.bucket_name,
+                Key=path
+            )
+            return True
+        except ClientError as e:
+            # Check if the exception is because the file does not exist
+            if e.response['Error']['Code'] == '404':
+                return False  # File not found
+            else:
+                # Something else went wrong
+                raise e
