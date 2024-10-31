@@ -41,21 +41,21 @@ There are a few unit tests to check some modules and one integration test to che
 pytest tests/
 ```
 
-## With docker image and FastAPI
+### With docker image and FastAPI
 
-### Docker setup
-#### Create your own image
+#### Docker setup
+##### Create your own image
 ```
 # Build image
 docker build -t <username>/<image_name>:<version>
 ```
 
-#### Pull prepared image from Docker Hub
+##### Pull prepared image from Docker Hub
 ```
 docker pull alexwerben/recsys:v3
 ```
 
-#### Run container
+##### Run container
 
 ```
 # Run container
@@ -66,9 +66,9 @@ docker exec -it <container_name> bash
 ```
 - *There must be `.env` file in project dir with access and secret keys to connect to S3.*
 
-### FastAPI
+#### FastAPI
 
-#### End points
+##### End points
 These frameworks are used to setup backend server with some end points to access service. End points can be accessed after running container, they are:
 
 - 0.0.0.0:15000/ - start page, should output "Hello, world!";
@@ -76,7 +76,7 @@ These frameworks are used to setup backend server with some end points to access
 - 0.0.0.0:15000/predict - downloads model from S3, makes prediction, saves recommendations;
 - 0.0.0.0:15000/predict_for_user?id={id} - gets recommendations for user with `user_id=={id}` and returns them in html format.
 
-#### Request script
+##### Request script
 
 There's also a FastAPI script that makes multiple requests to get recommendations for different users, and checks if model is ready. It can be done by running the following command:
 ```
